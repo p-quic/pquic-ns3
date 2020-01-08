@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
   p2p.SetChannelAttribute("Delay", StringValue(delay));
   p2p.SetQueueSize(StringValue(queue + "p"));
 
-  NetDeviceContainer devices = p2p.Install(sim.GetLeftNode(), sim.GetRightNode());
+  NetDeviceContainer devices = p2p.Install(sim.GetLeftNode(), sim.GetRightNode(), "ns3::PfifoFastQueueDisc");
   Ipv4AddressHelper ipv4;
   ipv4.SetBase("192.168.50.0", "255.255.255.0");
   Ipv4InterfaceContainer interfaces = ipv4.Assign(devices);
@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
   p2p_source.SetDeviceAttribute("DataRate", StringValue("100Mbps"));
   p2p_source.SetChannelAttribute("Delay", StringValue("1ms"));
 
-  NetDeviceContainer devices_source = p2p_source.Install(sim.GetRightNode(), source_node);
+  NetDeviceContainer devices_source = p2p_source.Install(sim.GetRightNode(), source_node, "ns3::PfifoFastQueueDisc");
   Ipv4AddressHelper ipv4_source;
   ipv4_source.SetBase("192.168.49.0", "255.255.255.0");
   Ipv4InterfaceContainer interfaces_source = ipv4_source.Assign(devices_source);
@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
   p2p_sink.SetDeviceAttribute("DataRate", StringValue("100Mbps"));
   p2p_sink.SetChannelAttribute("Delay", StringValue("1ms"));
 
-  NetDeviceContainer devices_sink = p2p_sink.Install(sink_node, sim.GetLeftNode());
+  NetDeviceContainer devices_sink = p2p_sink.Install(sink_node, sim.GetLeftNode(), "ns3::PfifoFastQueueDisc");
   Ipv4AddressHelper ipv4_sink;
   ipv4_sink.SetBase("192.168.51.0", "255.255.255.0");
   Ipv4InterfaceContainer interfaces_sink = ipv4_sink.Assign(devices_sink);

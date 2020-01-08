@@ -36,6 +36,10 @@ plugins:
     plugins:
       - plugins/multipath/multipath_rtt.plugin
       - plugins/multipath/addresses_filters/filter_ns3_ipv4.plugin
+  ecn:
+    name: ECN
+    plugins:
+      - plugins/ecn/ecn.plugin
 
 definitions:
   simple-p2p:
@@ -59,6 +63,7 @@ definitions:
         - qlog
         - multipath-rr
         - multipath-rtt
+        - ecn
     sim_timeout: 180
     hard_timeout: 480
   droplist:
@@ -90,6 +95,7 @@ definitions:
         - qlog
         - multipath-rr
         - multipath-rtt
+        - ecn
     sim_timeout: 120
     hard_timeout: 60
   multipath-p2p:
@@ -113,6 +119,7 @@ definitions:
         - no_plugins
         - multipath-rr
         - multipath-rtt
+        - ecn
     sim_timeout: 180
     hard_timeout: 480
   multipath-p2p-asym:
@@ -181,7 +188,7 @@ definitions:
         - multipath-rr
         - multipath-rtt
       filesize:
-        - 50_000
+        - 100_000
     sim_timeout: 60
     hard_timeout: 120
   multipath-p2p-faulty:

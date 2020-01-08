@@ -1,0 +1,13 @@
+diff --git a/src/internet/model/udp-socket-impl.cc b/src/internet/model/udp-socket-impl.cc
+index 2721c68..47a2324 100644
+--- a/src/internet/model/udp-socket-impl.cc
++++ b/src/internet/model/udp-socket-impl.cc
+@@ -811,7 +811,7 @@ UdpSocketImpl::SendTo (Ptr<Packet> p, uint32_t flags, const Address &address)
+       InetSocketAddress transport = InetSocketAddress::ConvertFrom (address);
+       Ipv4Address ipv4 = transport.GetIpv4 ();
+       uint16_t port = transport.GetPort ();
+-      uint8_t tos = transport.GetTos ();
++      uint8_t tos = GetIpTos();
+       return DoSendTo (p, ipv4, port, tos);
+     }
+   else if (Inet6SocketAddress::IsMatchingType (address))

@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     p2p.SetChannelAttribute("Delay", StringValue(delay));
     p2p.SetQueueSize(StringValue(queue + "p"));
     
-    NetDeviceContainer devices = p2p.Install(sim.GetLeftNode(), sim.GetRightNode());
+    NetDeviceContainer devices = p2p.Install(sim.GetLeftNode(), sim.GetRightNode(), "ns3::PfifoFastQueueDisc");
     Ipv4AddressHelper ipv4;
     ipv4.SetBase("192.168.50.0", "255.255.255.0");
     Ipv4InterfaceContainer interfaces = ipv4.Assign(devices);

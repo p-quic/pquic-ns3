@@ -4,7 +4,7 @@
 #include "ns3/point-to-point-module.h"
 #include "../helper/quic-network-simulator-helper.h"
 #include "../helper/quic-point-to-point-helper.h"
-#include "../helper/blackhole-error-model.h"
+#include "../helper/ecn-mark-error-model.h"
 
 using namespace ns3;
 
@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
   ipv4.SetBase("192.168.50.0", "255.255.255.0");
   Ipv4InterfaceContainer interfaces = ipv4.Assign(devices);
 
-  Ptr<BlackholeErrorModel> em = CreateObject<BlackholeErrorModel>();
+  Ptr<EcnMarkErrorModel> em = CreateObject<EcnMarkErrorModel>();
   em->Disable();
   if(drop_dir == to_client || drop_dir == both) {
     devices.Get(0)->SetAttribute("ReceiveErrorModel", PointerValue(em));

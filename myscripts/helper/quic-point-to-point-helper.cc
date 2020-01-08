@@ -12,14 +12,14 @@ void QuicPointToPointHelper::SetQueueSize(StringValue size) {
   queue_size_ = size;
 }
 
-NetDeviceContainer QuicPointToPointHelper::Install(Ptr<Node> a, Ptr<Node> b) {
+NetDeviceContainer QuicPointToPointHelper::Install(Ptr<Node> a, Ptr<Node> b, std::string queue_class) {
   NetDeviceContainer devices = PointToPointHelper::Install(a, b);
   // capture a pcap of all packets
   //EnablePcap("trace_node_left.pcap", devices.Get(0), false, true);
   //EnablePcap("trace_node_right.pcap", devices.Get(1), false, true);
   
   TrafficControlHelper tch;
-  tch.SetRootQueueDisc("ns3::PfifoFastQueueDisc", "MaxSize", queue_size_);
+  tch.SetRootQueueDisc(queue_class, "MaxSize", queue_size_);
   tch.Install(devices);
 
   return devices;

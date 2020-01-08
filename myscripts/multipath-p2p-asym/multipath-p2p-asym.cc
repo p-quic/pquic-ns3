@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
       p2p.SetChannelAttribute("Delay", StringValue(fmt_d.str()));
       p2p.SetQueueSize(StringValue(fmt_q.str()));
 
-      NetDeviceContainer devices = p2p.Install(sim.GetLeftNode(), sim.GetRightNode());
+      NetDeviceContainer devices = p2p.Install(sim.GetLeftNode(), sim.GetRightNode(), "ns3::PfifoFastQueueDisc");
       Ipv4AddressHelper ipv4;
       char base_ipv4[17];
       sprintf(base_ipv4, "192.168.%d.0", 50 + i);

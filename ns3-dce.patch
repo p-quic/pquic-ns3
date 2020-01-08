@@ -20,11 +20,11 @@ index 708ef69..65194f9 100644
 +
 +  if (r != -1) {
 +      std::map < int,FileUsage * > ::iterator it = current->process->openFiles.find (fd);
-+      if (current->process->openFiles.end () == it) 
++      if (current->process->openFiles.end () == it)
 +      {
 +        current->err = EBADF;
 +        return -1;
-+      } 
++      }
 +      FileUsage *fu = it->second;
 +      if (fu->IsClosed ())
 +      {
@@ -128,7 +128,7 @@ index f130ec5..492e46e 100644
  // from glibc's string.h
  extern char * __strcpy_chk (char *__restrict __dest,
 diff --git a/model/libc-ns3.h b/model/libc-ns3.h
-index 3294921..17ce584 100644
+index 3294921..3d32422 100644
 --- a/model/libc-ns3.h
 +++ b/model/libc-ns3.h
 @@ -49,9 +49,9 @@
@@ -216,3 +216,53 @@ index 1455196..9a8a5a9 100644
          proc = subprocess.Popen(argv, env=proc_env, cwd=cwd, stderr=subprocess.PIPE)
          error = False
          for line in proc.stderr:
+diff --git a/model/unix-datagram-socket-fd.cc b/model/unix-datagram-socket-fd.cc
+index 5aca622..cea520c 100644
+--- a/model/unix-datagram-socket-fd.cc
++++ b/model/unix-datagram-socket-fd.cc
+@@ -260,6 +260,14 @@ UnixDatagramSocketFd::DoRecvmsg (struct msghdr *msg, int flags)
+                 }
+ 
+             }
++          if (m_socket->IsIpRecvTos()) {
++       		SocketIpTosTag ipTosTag;
++       		bool isTagPresent = packet->PeekPacketTag(ipTosTag);
++       		if (isTagPresent) {
++       			int tos = ipTosTag.GetTos();
++       			cmsg.Add(SOL_IP, IP_TOS, sizeof(int), (const uint8_t*) &tos);
++       		}
++          }
+           cmsg.Finish ();
+         }
+ 
+diff --git a/model/unix-socket-fd.cc b/model/unix-socket-fd.cc
+index 4f66419..6b16b79 100644
+--- a/model/unix-socket-fd.cc
++++ b/model/unix-socket-fd.cc
+@@ -387,6 +387,26 @@ UnixSocketFd::Setsockopt (int level, int optname,
+             int *v = (int*)optval;
+             m_socket->SetRecvPktInfo (*v ? true : false);
+           } break;
++	case IP_TOS:
++	  {
++	    if (optlen != sizeof (int))
++              {
++                current->err = EINVAL;
++                return -1;
++              }
++	    int *v = (int *)optval;
++            m_socket->SetIpTos((uint8_t) *v);
++	  } break;
++        case IP_RECVTOS:
++	  {
++	    if (optlen != sizeof (int))
++              {
++                current->err = EINVAL;
++                return -1;
++              }
++	    int *v = (int *)optval;
++            m_socket->SetIpRecvTos(*v ? true : false);
++	  } break;
+         default:
+           NS_LOG_WARN ("Unsupported setsockopt requested. level: SOL_IP, optname: " << optname);
+           break;
