@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" style="height: auto;">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <title>PQUIC ns-3 results</title>
+
+  <!-- Font Awesome Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.12.0/css/all.min.css" rel="stylesheet">
+  <!-- Theme style -->
+  <link href="https://cdn.jsdelivr.net/npm/admin-lte@3.0.2/dist/css/adminlte.min.css" rel="stylesheet">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.20/rg-1.1.1/sp-1.0.1/sl-1.3.1/datatables.min.css"/>
+  <style>
+    table.table th, table.table td {
+      padding: .25em;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body class="layout-top-nav" style="height: auto;">
+<div class="wrapper">
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper" style="min-height: 762px;">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">PQUIC ns-3 results</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="">TODO commit dir</a></li>
+              <li class="breadcrumb-item active">TODO file</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <div class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-3 col-sm-6 col-12">
+            <div class="info-box">
+              <span class="info-box-icon bg-info"><i class="fas fa-vial"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Passed / Tests</span>
+                <span class="info-box-number"><span id="no-passed"></span> / <span id="no-tests"></span></span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+          <div class="col-md-3 col-sm-6 col-12">
+            <div class="info-box">
+              <span class="info-box-icon bg-success"><i class="far fa-clock"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text" id="start-date"></span>
+                <span class="info-box-number" id="duration-time"></span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+          <div class="col-md-3 col-sm-6 col-12">
+            <div class="info-box">
+              <span class="info-box-icon bg-warning"><i class="fas fa-bug"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Failures</span>
+                <span class="info-box-number" id="no-failures"></span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+          <div class="col-md-3 col-sm-6 col-12">
+            <div class="info-box">
+              <span class="info-box-icon bg-danger"><i class="fas fa-hourglass-end"></i></span>
+
+              <div class="info-box-content">
+                <span class="info-box-text">Timedout</span>
+                <span class="info-box-number" id="no-timedout"></span>
+              </div>
+              <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <div class="row">
+          <div class="card">
+            <div class="card-body">
+              <table id="results" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th>Test</th>
+                  <th>Plugin</th>
+                  <th>Test duration</th>
+                  <th>Transfer duration</th>
+                  <th>Parameters</th>
+                  <th>Failures</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+                <tfoot>
+                <tr>
+                  <th>Test</th>
+                  <th>Plugin</th>
+                  <th>Test duration</th>
+                  <th>Transfer duration</th>
+                  <th>Parameters</th>
+                  <th>Failures</th>
+                </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <div id="sidebar-overlay"></div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+<!-- jQuery -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.20/rg-1.1.1/sp-1.0.1/sl-1.3.1/datatables.min.js"></script>
+<!-- AdminLTE App -->
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.0.2/dist/js/adminlte.min.js"></script>
+<script>
+    function draw(results) {
+        const allRuns = [];
+        $.each(results, function (test, variants) {
+            $.each(variants, function (type, data) {
+                $.each(data, function (name, runs) {
+                    $.each(runs, function (i, r) {
+                        r[type] = name;
+                        r['test'] = test;
+                    });
+                    allRuns.push(...runs);
+                })
+            })
+        });
+
+        var passed = 0;
+        var timedout = 0;
+        var start = Number.MAX_SAFE_INTEGER;
+        var end = 0;
+
+        $.each(allRuns, function (i, r) {
+            if (r.failures.length === 0) {
+                passed++;
+            } else {
+                $.each(r.failures, function (i, text) {
+                    if (text.toString().includes("Timeout reached")) {
+                        timedout++;
+                        return false;
+                    }
+                })
+            }
+            start = Math.min(start, r.start);
+            end = Math.max(end, r.end);
+        });
+
+        console.log(allRuns.length, passed, timedout, allRuns.length - passed - timedout);
+
+        $('#no-tests').text(allRuns.length);
+        $('#no-passed').text(passed);
+        $('#start-date').text(new Date(start * 1000).toLocaleString());
+        $('#duration-time').text(new Date((end - start) * 1000).toLocaleTimeString());
+        $('#no-failures').text(allRuns.length - passed - timedout);
+        $('#no-timedout').text(timedout);
+
+        const table = $('#results').find('tbody');
+
+        $.each(allRuns, function (i, r) {
+            table.append(`
+<tr>
+    <td>${r['test']}</td>
+    <td>${r['plugins']}</td>
+    <td>${(r['end'] - r['start']).toFixed(2)}</td>
+    <td>${r['transfer_time']}</td>
+    <td>${JSON.stringify(r['values'])}</td>
+    <td>${r['failures'].join('<br>')}</td>
+</tr>`);
+        });
+
+        $('#results').DataTable({
+            responsive: true,
+            dom: 'Pfrtip',
+            searchPanes:{
+                columns:[0, 1, 4, 5],
+                layout: 'columns-4',
+                viewTotal: true,
+                orderable: false,
+                clear: false,
+            },
+            rowGroup: { dataSrc: [0, 1]}
+        });
+    }
+</script>
+
+<script>
+    const params = new URLSearchParams(document.location.search.substring(1));
+    const file = params.get('file') || "results.json";
+
+    $.get(file, function (data) {
+        draw(data);
+    });
+</script>
+
+</body>
+</html>

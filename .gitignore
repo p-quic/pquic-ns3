@@ -1,6 +1,7 @@
 __pycache__
 jail/*
 !jail/cgi-bin
+!jail/results.html
 *.json
 *.pcap
 .test_suite.lock
