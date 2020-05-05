@@ -15,9 +15,13 @@ public:
 
   // SetQueueSize sets the queue size for the PfifoFastQueueDisc
   void SetQueueSize(StringValue);
+  void SetBandwidth(StringValue);
+  void SetDelay(StringValue);
   NetDeviceContainer Install(Ptr<Node> a, Ptr<Node> b, std::string queue_class);
 private:
   StringValue queue_size_; // for the PfifoFastQueueDisc
+  StringValue bandwidth_;
+  StringValue delay_;
 };
 
 #endif /* QUIC_POINT_TO_POINT_HELPER_H */
