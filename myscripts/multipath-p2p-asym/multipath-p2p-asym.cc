@@ -50,7 +50,9 @@ int main(int argc, char *argv[]) {
   SetDrops(server0_drops, s0d);
   SetDrops(server1_drops, s1d);
 
-  QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesize);
+  std::vector<std::string> filesizes;
+  filesizes.push_back(filesize);
+  QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesizes);
 
   for (int i = 0; i < 2; i++) {
       double b = (sum_bandwidth * fabs(i - b_bal_val));

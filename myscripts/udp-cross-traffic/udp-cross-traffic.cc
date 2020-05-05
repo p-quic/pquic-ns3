@@ -25,7 +25,9 @@ int main(int argc, char *argv[]) {
   NS_ABORT_MSG_IF(filesize.length() == 0, "Missing parameter: filesize");
   NS_ABORT_MSG_IF(cross_data_rate.length() == 0, "Missing parameter: crossdatarate");
 
-  QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesize);
+  std::vector<std::string> filesizes;
+  filesizes.push_back(filesize);
+  QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesizes);
 
   QuicPointToPointHelper p2p;
   p2p.SetDeviceAttribute("DataRate", StringValue(bandwidth));

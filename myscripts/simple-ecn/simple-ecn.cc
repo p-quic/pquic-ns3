@@ -29,7 +29,9 @@ int main(int argc, char *argv[]) {
   Config::SetDefault ("ns3::RedQueueDisc::MaxSize", StringValue(queue + "p"));
   Config::SetDefault ("ns3::RedQueueDisc::MeanPktSize", UintegerValue (1200));
 
-  QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesize);
+  std::vector<std::string> filesizes;
+  filesizes.push_back(filesize);
+  QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesizes);
 
   // Stick in the point-to-point line between the sides.
   QuicPointToPointHelper p2p;

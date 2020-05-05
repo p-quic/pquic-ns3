@@ -24,7 +24,9 @@ int main(int argc, char *argv[]) {
   NS_ABORT_MSG_IF(filesize.length() == 0, "Missing parameter: filesize");
   NS_ABORT_MSG_IF(paths.length() == 0, "Missing parameter: paths");
 
-  QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesize);
+  std::vector<std::string> filesizes;
+  filesizes.push_back(filesize);
+  QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesizes);
 
   // Stick in N point-to-point lines between the sides.
   for (int i = 0; i < atoi(paths.c_str()); i++) {

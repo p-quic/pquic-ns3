@@ -46,7 +46,9 @@ int main(int argc, char *argv[]) {
     else NS_ABORT_MSG("Invalid directon value.");
   }
 
-  QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesize);
+  std::vector<std::string> filesizes;
+  filesizes.push_back(filesize);
+  QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesizes);
 
   // Stick in the point-to-point line between the sides.
   QuicPointToPointHelper p2p;

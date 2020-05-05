@@ -63,7 +63,9 @@ int main(int argc, char *argv[]) {
         else NS_ABORT_MSG("Invalid directon value.");
     }
 
-    QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesize);
+    std::vector<std::string> filesizes;
+    filesizes.push_back(filesize);
+    QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesizes);
 
     for (int i = 0; i < 2; i++) {
         double b = (sum_bandwidth * fabs(i - b_bal_val));

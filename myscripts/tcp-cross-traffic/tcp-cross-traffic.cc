@@ -38,7 +38,9 @@ int main(int argc, char *argv[]) {
   NS_ABORT_MSG_IF(queue.length() == 0, "Missing parameter: queue");
   NS_ABORT_MSG_IF(filesize.length() == 0, "Missing parameter: filesize");
 
-  QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesize);
+  std::vector<std::string> filesizes;
+  filesizes.push_back(filesize);
+  QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesizes);
 
   QuicPointToPointHelper p2p;
   p2p.SetDeviceAttribute("DataRate", StringValue(bandwidth));

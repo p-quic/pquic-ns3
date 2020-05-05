@@ -22,7 +22,9 @@ int main(int argc, char *argv[]) {
   NS_ABORT_MSG_IF(queue.length() == 0, "Missing parameter: queue");
   NS_ABORT_MSG_IF(filesize.length() == 0, "Missing parameter: filesize");
 
-  QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesize);
+  std::vector<std::string> filesizes;
+  filesizes.push_back(filesize);
+  QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesizes);
 
   // Stick in the point-to-point line between the sides.
   QuicPointToPointHelper p2p;

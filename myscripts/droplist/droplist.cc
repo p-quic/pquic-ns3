@@ -34,7 +34,9 @@ int main(int argc, char *argv[]) {
     SetDrops(client_drops, client_drops_in);
     SetDrops(server_drops, server_drops_in);
 
-    QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesize);
+    std::vector<std::string> filesizes;
+    filesizes.push_back(filesize);
+    QuicNetworkSimulatorHelper sim = QuicNetworkSimulatorHelper(filesizes);
 
     // Stick in the point-to-point line between the sides.
     QuicPointToPointHelper p2p;

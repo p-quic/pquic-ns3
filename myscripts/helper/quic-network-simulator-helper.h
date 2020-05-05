@@ -7,7 +7,7 @@ using namespace ns3;
 
 class QuicNetworkSimulatorHelper {
 public:
-  QuicNetworkSimulatorHelper(std::string);
+  QuicNetworkSimulatorHelper(std::vector<std::string>);
   void Run(Time);
   Ptr<Node> GetLeftNode() const;
   Ptr<Node> GetRightNode() const;

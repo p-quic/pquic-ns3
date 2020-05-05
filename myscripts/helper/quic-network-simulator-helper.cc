@@ -40,7 +40,7 @@ void installNetDevice(Ptr<Node> node, std::string deviceName, Mac48AddressValue 
   ipv4->SetUp(interface);
 }
 
-QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::string filesize) {
+QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> filesizes) {
   NodeContainer nodes;
   nodes.Create(2);
   InternetStackHelper internet;
@@ -86,29 +86,34 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::string filesize) {
   apps = dce.Install(right_node_);
   apps.Start(Seconds(1.0));
 
-  dce.SetBinary("picoquicdemo");
-  dce.ResetArguments();
-  dce.ResetEnvironment();
-  if (!debug) {
-      dce.AddArgument("-l");
-      dce.AddArgument("/dev/null");
-  }
-  if (qlog) {
-      dce.AddArgument("-q");
-      dce.AddArgument("client.qlog");
-  }
-  for (size_t i = 0; i < plugins.size(); i++) {
-      dce.AddArgument("-P");
-      dce.AddArgument(plugins[i]);
-  }
-  dce.AddArgument("-4");
-  dce.AddArgument("-G");
-  dce.AddArgument(filesize);
-  dce.AddArgument("192.168.50.2");
-  dce.AddArgument("4443");
+  int id = 0;
+  for (std::string f : filesizes) {
+      dce.SetBinary("picoquicdemo");
+      dce.ResetArguments();
+      dce.ResetEnvironment();
+      if (!debug) {
+          dce.AddArgument("-l");
+          dce.AddArgument("/dev/null");
+      }
+      if (qlog) {
+          dce.AddArgument("-q");
+          std::string qlogFile = "client_" + std::to_string(id) + ".qlog";
+          dce.AddArgument(qlogFile);
+      }
+      for (size_t i = 0; i < plugins.size(); i++) {
+          dce.AddArgument("-P");
+          dce.AddArgument(plugins[i]);
+      }
+      dce.AddArgument("-4");
+      dce.AddArgument("-G");
+      dce.AddArgument(f);
+      dce.AddArgument("192.168.50.2");
+      dce.AddArgument("4443");
 
-  apps = dce.Install(left_node_);
-  apps.Start(Seconds(2.0));
+      apps = dce.Install(left_node_);
+      apps.Start(Seconds(2.0));
+      id++;
+  }
 }
 
 void QuicNetworkSimulatorHelper::Run(Time duration) {
