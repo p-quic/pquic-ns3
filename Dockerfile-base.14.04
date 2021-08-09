@@ -4,13 +4,13 @@ RUN apt-get update
 RUN apt-get install -y mercurial libexpat1-dev git-core build-essential bison \
     flex libssl-dev libdb-dev libpcap-dev libc6-dbg libsysfs-dev gawk indent \
     pkg-config autoconf automake sudo ccache software-properties-common \
-    libsaxonb-java openjdk-7-jre-headless bc wget \
+    libsaxonb-java openjdk-7-jre-headless bc wget python3 \
     valgrind vim mpich apt-transport-https && \
     rm -rf /var/lib/apt/lists/*
 
 # install g++-4.9
 RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test && apt-get update && \
-    apt-get install -y g++-4.9
+    apt-get install -y g++-4.9 && rm -rf /var/lib/apt/lists/*
 
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 10 && \
  update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 20 && \
@@ -44,14 +44,20 @@ RUN mkdir -p /home/ns3dce/dce-linux-dev
 WORKDIR /home/ns3dce/dce-linux-dev
 RUN git clone https://github.com/thehajime/bake
 
-RUN ./bake/bake.py configure -e dce-linux-dev && \
+RUN ./bake/bake.py configure -e dce-linux-dev -e iperf -m && \
     ./bake/bake.py download
 
 WORKDIR /home/ns3dce/dce-linux-dev/source/ns-3-dev
 COPY ns3.patch .
 RUN git apply < ns3.patch
 
-WORKDIR /home/ns3dce/dce-linux-dev
-RUN ./bake/bake.py build -j $(nproc)
+WORKDIR /home/ns3dce/dce-linux-dev/source/ns-3-dce
+RUN git config --global user.email "ns3dce@localhost"
+RUN git config --global user.name "ns-3 DCE"
+RUN git revert 94de5084e7430bb51c8176cd99703e552e305391
 
-RUN cd source/ns-3-dce && ./test.py -v -c unit
+WORKDIR /home/ns3dce/dce-linux-dev
+RUN sed -i 's;#!/usr/bin/env python;#!/usr/bin/env python3;g' /home/ns3dce/dce-linux-dev/source/ns-3-dce/waf
+RUN ./bake/bake.py build -j $(nproc) -vvv
+
+RUN cd source/ns-3-dce && python3 ./test.py -v -c unit

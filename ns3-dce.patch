@@ -1,5 +1,5 @@
 diff --git a/model/dce-fd.cc b/model/dce-fd.cc
-index 708ef69..65194f9 100644
+index 708ef69..7849324 100644
 --- a/model/dce-fd.cc
 +++ b/model/dce-fd.cc
 @@ -853,3 +853,41 @@ int dce_fsync (int fd)
@@ -128,7 +128,7 @@ index f130ec5..492e46e 100644
  // from glibc's string.h
  extern char * __strcpy_chk (char *__restrict __dest,
 diff --git a/model/libc-ns3.h b/model/libc-ns3.h
-index 3294921..3d32422 100644
+index 3294921..17ce584 100644
 --- a/model/libc-ns3.h
 +++ b/model/libc-ns3.h
 @@ -49,9 +49,9 @@
@@ -203,24 +203,24 @@ index d695242..07b8538 100644
  #ifdef __cplusplus
  }
  #endif
-diff --git a/wutils.py b/wutils.py
-index 1455196..9a8a5a9 100644
---- a/wutils.py
-+++ b/wutils.py
-@@ -146,7 +146,7 @@ def run_argv(argv, env, os_env=None, cwd=None, force_no_valgrind=False):
-             raise WafError("Options --command-template and --valgrind are conflicting")
-         if not env['VALGRIND']:
-             raise WafError("valgrind is not installed")
--        argv = [env['VALGRIND'], "--leak-check=full", "--show-reachable=yes", "--error-exitcode=1"] + argv
-+        argv = [''.join(env['VALGRIND']), "--leak-check=full", "--show-reachable=yes", "--error-exitcode=1"] + argv
-         proc = subprocess.Popen(argv, env=proc_env, cwd=cwd, stderr=subprocess.PIPE)
-         error = False
-         for line in proc.stderr:
 diff --git a/model/unix-datagram-socket-fd.cc b/model/unix-datagram-socket-fd.cc
-index 5aca622..cea520c 100644
+index 5aca622..3cb6a48 100644
 --- a/model/unix-datagram-socket-fd.cc
 +++ b/model/unix-datagram-socket-fd.cc
-@@ -260,6 +260,14 @@ UnixDatagramSocketFd::DoRecvmsg (struct msghdr *msg, int flags)
+@@ -236,10 +236,8 @@ UnixDatagramSocketFd::DoRecvmsg (struct msghdr *msg, int flags)
+                   struct in_pktinfo pkt;
+                   Ptr<Ipv4> ipv4 = node->GetObject<Ipv4> ();
+                   pkt.ipi_ifindex = ipv4->GetInterfaceForDevice (node->GetDevice (ipv4Tag.GetRecvIf ()));
+-                  if (msg->msg_name)
+-                    {
+-                      memcpy (&pkt.ipi_addr, msg->msg_name, sizeof (pkt.ipi_addr));
+-                    }
++                  pkt.ipi_addr.s_addr = htonl(ipv4Tag.GetAddress().Get());
++                  pkt.ipi_spec_dst.s_addr = htonl(ipv4Tag.GetLocalAddress().Get());
+                   cmsg.Add (SOL_IP, IP_PKTINFO, sizeof (struct in_pktinfo), (const uint8_t *)&pkt);
+ 
+                   NS_LOG_DEBUG ("ipv4 tag, iface: " <<  pkt.ipi_ifindex);
+@@ -260,6 +258,14 @@ UnixDatagramSocketFd::DoRecvmsg (struct msghdr *msg, int flags)
                  }
  
              }

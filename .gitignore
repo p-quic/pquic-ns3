@@ -3,6 +3,7 @@ jail/*
 !jail/cgi-bin
 !jail/results.html
 *.json
+*.qlog
 *.pcap
 .test_suite.lock
 .idea

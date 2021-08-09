@@ -74,6 +74,9 @@ def read_all(filename, mode='r'):
 
 
 def run_binary(tests, binary, params, values, sim_timeout, hard_timeout, env=None):
+    core = os.getpid() % os.cpu_count()
+    os.sched_setaffinity(os.getpid(), {core})
+
     bw, fs = values['bandwidth'][0], values['filesize'][0]
     failures = []
 
