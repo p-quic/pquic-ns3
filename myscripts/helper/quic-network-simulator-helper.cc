@@ -67,7 +67,7 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::string filesize) {
 
   bool qlog = std::getenv("PQUIC_QLOG") && strlen(std::getenv("PQUIC_QLOG"));
 
-  dce.SetBinary("picoquicdemo");
+  dce.SetBinary("picoquicdemomp");
   dce.ResetArguments();
   dce.ResetEnvironment();
   if (!debug) {
@@ -78,15 +78,17 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::string filesize) {
       dce.AddArgument("-q");
       dce.AddArgument("server.qlog");
   }
-  for (size_t i = 0; i < plugins.size(); i++) {
-      dce.AddArgument("-P");
-      dce.AddArgument(plugins[i]);
-  }
+  // for (size_t i = 0; i < plugins.size(); i++) {
+  //     dce.AddArgument("-P");
+  //     dce.AddArgument(plugins[i]);
+  // }
+  dce.AddArgument("-M");
+  dce.AddArgument("2");
 
   apps = dce.Install(right_node_);
   apps.Start(Seconds(1.0));
 
-  dce.SetBinary("picoquicdemo");
+  dce.SetBinary("picoquicdemomp");
   dce.ResetArguments();
   dce.ResetEnvironment();
   if (!debug) {
@@ -97,13 +99,17 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::string filesize) {
       dce.AddArgument("-q");
       dce.AddArgument("client.qlog");
   }
-  for (size_t i = 0; i < plugins.size(); i++) {
-      dce.AddArgument("-P");
-      dce.AddArgument(plugins[i]);
-  }
-  dce.AddArgument("-4");
+  // for (size_t i = 0; i < plugins.size(); i++) {
+  //     dce.AddArgument("-P");
+  //     dce.AddArgument(plugins[i]);
+  // }
+  dce.AddArgument("-M");
+  dce.AddArgument("2");
+  //dce.AddArgument("-4");
   dce.AddArgument("-G");
   dce.AddArgument(filesize);
+  dce.AddArgument("-A");
+  dce.AddArgument("192.168.51.1");
   dce.AddArgument("192.168.50.2");
   dce.AddArgument("4443");
 

@@ -49,9 +49,9 @@ index 0cac665..e130fed 100644
 --- a/model/dce-poll.cc
 +++ b/model/dce-poll.cc
 @@ -15,6 +15,17 @@ NS_LOG_COMPONENT_DEFINE ("DcePollSelect");
- 
+
  using namespace ns3;
- 
+
 +long int dce___fdelt_chk(long int d)
 +{
 +	if (d < 0 || d >= FD_SETSIZE) {
@@ -67,13 +67,13 @@ index 0cac665..e130fed 100644
  {
    int count = -1;
 @@ -208,6 +219,7 @@ int dce_select (int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds,
- 
+
    if (timeout)
      {
 +    if (timeout->tv_sec == 0 && timeout->tv_usec > 0 && timeout->tv_usec < 1000) { timeout->tv_usec = 1000; }
        pollTo = timeout->tv_sec * 1000 + timeout->tv_usec / 1000;
      }
- 
+
 diff --git a/model/dce-stdlib.cc b/model/dce-stdlib.cc
 index 162c512..8a0b4ff 100644
 --- a/model/dce-stdlib.cc
@@ -85,7 +85,7 @@ index 162c512..8a0b4ff 100644
 -      delete c_fullpath;
        return -1;
      }
- 
+
 @@ -116,7 +115,6 @@ int dce_mkstemp (char *temp)
    if (fd == -1)
      {
@@ -96,12 +96,12 @@ index 162c512..8a0b4ff 100644
    UnixFd *unixFd = 0;
 @@ -125,7 +123,6 @@ int dce_mkstemp (char *temp)
    current->process->openFiles[fd] = new FileUsage (fd, unixFd);
- 
+
    strncpy (temp, &c_fullpath[strlen(c_fullpath)-strlen(temp)], strlen(temp));
 -  delete c_fullpath;
    return fd;
  }
- 
+
 diff --git a/model/dce-stdlib.h b/model/dce-stdlib.h
 index ab30172..401b228 100644
 --- a/model/dce-stdlib.h
@@ -111,7 +111,7 @@ index ab30172..401b228 100644
  FILE * dce_tmpfile(void);
  int dce_rename (const char *oldpath, const char *newpath);
 +int dce_dprintf(int fd, const char *format, ...);
- 
+
  #ifdef __cplusplus
  }
 diff --git a/model/libc-dce.cc b/model/libc-dce.cc
@@ -124,7 +124,7 @@ index f130ec5..492e46e 100644
  // extern int __xpg_strerror_r (int __errnum, char *__buf, size_t __buflen);
 -extern int __xpg_strerror_r (int __errnum, char *__buf, size_t __buflen);
 +// extern int __xpg_strerror_r (int __errnum, char *__buf, size_t __buflen);
- 
+
  // from glibc's string.h
  extern char * __strcpy_chk (char *__restrict __dest,
 diff --git a/model/libc-ns3.h b/model/libc-ns3.h
@@ -134,14 +134,14 @@ index 3294921..3d32422 100644
 @@ -49,9 +49,9 @@
  // // not really a libc function, but we still need to get pointer from DCE to this function
  NATIVE (dce_global_variables_setup)
- 
+
 -// Not sure where it is defined and implemented
 -// NATIVE (__xpg_strerror_r)
 -
 +// Let's go crazy
 +NATIVE (syscall)
 +DCE (__fdelt_chk)
- 
+
  DCE    (__cxa_finalize)
  DCE    (__cxa_atexit)
 @@ -124,7 +124,7 @@ NATIVE (bzero)
@@ -165,7 +165,7 @@ index 3294921..3d32422 100644
 @@ -159,7 +159,6 @@ NATIVE_EXPLICIT (strtok_r,  char * (*)(char *, const char *, char **))
  NATIVE (strsep)
  NATIVE (strsignal)
- 
+
 -
  // LOCALE.H
  DCE    (setlocale)
@@ -189,7 +189,7 @@ index 264a5c4..f192bb7 100644
  #include <sys/types.h>
 +#include <bits/select2.h>
  #undef _SYS_SELECT_H
- 
+
  struct Libc
 diff --git a/model/sys/dce-select.h b/model/sys/dce-select.h
 index d695242..07b8538 100644
@@ -198,7 +198,7 @@ index d695242..07b8538 100644
 @@ -10,6 +10,7 @@ extern "C" {
  int dce_select (int nfds, fd_set *readfds, fd_set *writefds,
                  fd_set *exceptfds, struct timeval *timeout);
- 
+
 +long int dce___fdelt_chk (long int __d);
  #ifdef __cplusplus
  }
@@ -213,7 +213,7 @@ index 1455196..9a8a5a9 100644
              raise WafError("valgrind is not installed")
 -        argv = [env['VALGRIND'], "--leak-check=full", "--show-reachable=yes", "--error-exitcode=1"] + argv
 +        argv = [''.join(env['VALGRIND']), "--leak-check=full", "--show-reachable=yes", "--error-exitcode=1"] + argv
-         proc = subprocess.Popen(argv, env=proc_env, cwd=cwd, stderr=subprocess.PIPE)
+         proc = subprocess.Popen(argv, env=proc_env, cwd=cwd, universal_newlines=True, stderr=subprocess.PIPE)
          error = False
          for line in proc.stderr:
 diff --git a/model/unix-datagram-socket-fd.cc b/model/unix-datagram-socket-fd.cc
@@ -222,19 +222,19 @@ index 5aca622..cea520c 100644
 +++ b/model/unix-datagram-socket-fd.cc
 @@ -260,6 +260,14 @@ UnixDatagramSocketFd::DoRecvmsg (struct msghdr *msg, int flags)
                  }
- 
+
              }
 +          if (m_socket->IsIpRecvTos()) {
-+       		SocketIpTosTag ipTosTag;
-+       		bool isTagPresent = packet->PeekPacketTag(ipTosTag);
-+       		if (isTagPresent) {
-+       			int tos = ipTosTag.GetTos();
-+       			cmsg.Add(SOL_IP, IP_TOS, sizeof(int), (const uint8_t*) &tos);
-+       		}
++           SocketIpTosTag ipTosTag;
++           bool isTagPresent = packet->PeekPacketTag(ipTosTag);
++           if (isTagPresent) {
++            int tos = ipTosTag.GetTos();
++            cmsg.Add(SOL_IP, IP_TOS, sizeof(int), (const uint8_t*) &tos);
++           }
 +          }
            cmsg.Finish ();
          }
- 
+
 diff --git a/model/unix-socket-fd.cc b/model/unix-socket-fd.cc
 index 4f66419..6b16b79 100644
 --- a/model/unix-socket-fd.cc

@@ -58,9 +58,9 @@ def build_ns3():
     os.chdir(script_dir)
 
 
-def build_pquic():
-    if run(os.path.join(script_dir, 'prepare_pquic.sh'), stdout=test_args.debug, stderr=test_args.debug) is not 0:
-        print('Building pquic failed', file=sys.stderr)
+def build_picoquic():
+    if run(os.path.join(script_dir, 'prepare_picoquic.sh'), stdout=test_args.debug, stderr=test_args.debug) is not 0:
+        print('Building picoquic failed', file=sys.stderr)
         exit(0)
 
 
@@ -163,7 +163,7 @@ with open(os.path.join(script_dir, 'tests.yaml')) as f:
     tests = yaml.load(f)
 
 build_ns3()
-build_pquic()
+build_picoquic()
 os.chdir(ns3_dir)
 for b, opts in tests['definitions'].items():
 

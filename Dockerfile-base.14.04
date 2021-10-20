@@ -44,6 +44,12 @@ RUN mkdir -p /home/ns3dce/dce-linux-dev
 WORKDIR /home/ns3dce/dce-linux-dev
 RUN git clone https://github.com/thehajime/bake
 
+WORKDIR /home/ns3dce/dce-linux-dev/bake
+COPY bakeconf.xml.patch .
+RUN git apply < bakeconf.xml.patch
+
+WORKDIR /home/ns3dce/dce-linux-dev
+
 RUN ./bake/bake.py configure -e dce-linux-dev && \
     ./bake/bake.py download
 
@@ -54,4 +60,4 @@ RUN git apply < ns3.patch
 WORKDIR /home/ns3dce/dce-linux-dev
 RUN ./bake/bake.py build -j $(nproc)
 
-RUN cd source/ns-3-dce && ./test.py -v -c unit
+RUN cd source/dce-linux-dev && ./test.py -v -c unit

@@ -20,35 +20,25 @@ RUN update-alternatives --install /usr/bin/cc cc /usr/bin/clang-6.0 100 && \
 USER ns3dce
 
 # NS3 DCE patch
-WORKDIR /home/ns3dce/dce-linux-dev/source/ns-3-dce
+WORKDIR /home/ns3dce/dce-linux-dev/source/dce-linux-dev
 COPY ns3-dce.patch .
-RUN git apply < ns3-dce.patch && \
+RUN git apply --whitespace=warn < ns3-dce.patch && \
     ./waf
 
 # OpenSSL
 WORKDIR /home/ns3dce
-RUN wget https://www.openssl.org/source/openssl-1.1.1d.tar.gz && \
+RUN wget --no-check-certificate https://www.openssl.org/source/openssl-1.1.1d.tar.gz && \
     tar xf openssl-1.1.1d.tar.gz
 WORKDIR openssl-1.1.1d
 RUN ./config && \
     make -j$(nproc) && \
     make test && \
-    sudo make install 
-ENV LD_LIBRARY_PATH /usr/local/lib
-
-# LibArchive
-WORKDIR /home/ns3dce
-RUN wget https://www.libarchive.org/downloads/libarchive-3.4.0.tar.gz && \
-    tar xf libarchive-3.4.0.tar.gz
-WORKDIR libarchive-3.4.0
-RUN ./configure --disable-bsdtar --disable-bsdcpio --without-openssl && \ 
-    make -j$(nproc) && \
-    make check -j$(nproc) && \
     sudo make install
+ENV LD_LIBRARY_PATH /usr/local/lib
 
 # PicoTLS
 WORKDIR /home/ns3dce
-RUN git clone https://github.com/p-quic/picotls.git
+RUN git clone https://github.com/h2o/picotls.git
 WORKDIR picotls
 RUN git submodule init && \
     git submodule update
@@ -59,5 +49,5 @@ RUN cmake . && \
 WORKDIR /home/ns3dce/
 
 ENV DCE_PATH /home/ns3dce/pquic/
-ENV NS3_PATH /home/ns3dce/dce-linux-dev/source/ns-3-dce
-ENV LD_LIBRARY_PATH /home/ns3dce/dce-linux-dev/source/ns-3-dce/build/lib:/home/ns3dce/dce-linux-dev/build/lib:/usr/local/lib/
+ENV NS3_PATH /home/ns3dce/dce-linux-dev/source/dce-linux-dev
+ENV LD_LIBRARY_PATH /home/ns3dce/dce-linux-dev/source/dce-linux-dev/build/lib:/home/ns3dce/dce-linux-dev/build/lib:/usr/local/lib/
