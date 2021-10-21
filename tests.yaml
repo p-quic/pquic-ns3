@@ -12,34 +12,8 @@ binaries:
 
 plugins:
   no_plugins:
-    name: PQUIC Core
+    name: Picoquic Core with Multipath
     plugins: []
-  monitoring:
-    name: Monitoring
-    plugins:
-      - plugins/monitoring/monitoring.plugin
-  datagram:
-    name: DATAGRAM
-    plugins:
-      - plugins/datagram/datagram.plugin
-  qlog:
-    name: QLog
-    plugins:
-      - plugins/qlog/qlog.plugin
-  multipath-rr:
-    name: Multipath RR
-    plugins:
-      - plugins/multipath/multipath_rr.plugin
-      - plugins/multipath/addresses_filters/filter_ns3_ipv4.plugin
-  multipath-rtt:
-    name: Multipath RTT
-    plugins:
-      - plugins/multipath/multipath_rtt.plugin
-      - plugins/multipath/addresses_filters/filter_ns3_ipv4.plugin
-  ecn:
-    name: ECN
-    plugins:
-      - plugins/ecn/ecn.plugin
 
 definitions:
   simple-p2p:
@@ -58,12 +32,6 @@ definitions:
     variants:
       plugins:
         - no_plugins
-        - monitoring
-        - datagram
-        - qlog
-        - multipath-rr
-        - multipath-rtt
-        - ecn
     sim_timeout: 180
     hard_timeout: 480
   droplist:
@@ -90,12 +58,6 @@ definitions:
     variants:
       plugins:
         - no_plugins
-        - monitoring
-        - datagram
-        - qlog
-        - multipath-rr
-        - multipath-rtt
-        - ecn
     sim_timeout: 120
     hard_timeout: 60
   multipath-p2p:
@@ -117,9 +79,6 @@ definitions:
     variants:
       plugins:
         - no_plugins
-        - multipath-rr
-        - multipath-rtt
-        - ecn
     sim_timeout: 180
     hard_timeout: 480
   multipath-p2p-asym:
@@ -141,8 +100,6 @@ definitions:
     variants:
       plugins:
         - no_plugins
-        - multipath-rr
-        - multipath-rtt
       filesize:
         - 50_000
         - 1_000_000
@@ -185,8 +142,6 @@ definitions:
     variants:
       plugins:
         - no_plugins
-        - multipath-rr
-        - multipath-rtt
       filesize:
         - 100_000
     sim_timeout: 60
@@ -221,8 +176,6 @@ definitions:
     variants:
       plugins:
         - no_plugins
-        - multipath-rr
-        - multipath-rtt
       filesize:
         - 50_000
     sim_timeout: 60
@@ -243,8 +196,6 @@ definitions:
     variants:
       plugins:
         - no_plugins
-        - multipath-rr
-        - multipath-rtt
       filesize:
         - 1500
         - 10_000

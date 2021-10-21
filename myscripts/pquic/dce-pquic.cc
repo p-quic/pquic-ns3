@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
 
     if (systemId == node0->GetSystemId()) {
         // Launch picoquicdemo in server mode on node 0
-        dce.SetBinary("picoquicdemo");
+        dce.SetBinary("picoquicdemomp");
         dce.ResetArguments();
         dce.ResetEnvironment();
 
@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
     }
     if (systemId == node1->GetSystemId()) {
         // Launch picoquicdemo in client mode on node 1
-        dce.SetBinary("picoquicdemo");
+        dce.SetBinary("picoquicdemomp");
         dce.ResetArguments();
         dce.ResetEnvironment();
         dce.AddArgument("10.1.1.1");
