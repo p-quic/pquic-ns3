@@ -59,5 +59,5 @@ RUN cmake . && \
 WORKDIR /home/ns3dce/
 
 ENV DCE_PATH /home/ns3dce/pquic/
-ENV NS3_PATH /home/ns3dce/dce-linux-dev/source/ns-3-dce
-ENV LD_LIBRARY_PATH /home/ns3dce/dce-linux-dev/source/ns-3-dce/build/lib:/home/ns3dce/dce-linux-dev/source/ns-3-dce/build_opt/lib:/home/ns3dce/dce-linux-dev/build/lib:/home/ns3dce/dce-linux-dev/build_opt/lib:/usr/local/lib/
+ENV NS3_PATH /home/ns3dce/dce-linux-dev/source/dce-linux-dev
+ENV LD_LIBRARY_PATH /home/ns3dce/dce-linux-dev/source/dce-linux-dev/build/lib:/home/ns3dce/dce-linux-dev/source/dce-linux-dev/build_opt/lib:/home/ns3dce/dce-linux-dev/build/lib:/home/ns3dce/dce-linux-dev/build_opt/lib:/usr/local/lib/
