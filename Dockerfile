@@ -20,7 +20,7 @@ RUN update-alternatives --install /usr/bin/cc cc /usr/bin/clang-6.0 100 && \
 USER ns3dce
 
 # NS3 DCE patch
-WORKDIR /home/ns3dce/dce-linux-dev/source/ns-3-dce
+WORKDIR /home/ns3dce/dce-linux-dev/source/dce-linux-dev
 COPY ns3-dce.patch .
 RUN git apply < ns3-dce.patch && \
     ./waf
