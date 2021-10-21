@@ -225,12 +225,12 @@ index 5aca622..3cb6a48 100644
  
              }
 +          if (m_socket->IsIpRecvTos()) {
-+       		SocketIpTosTag ipTosTag;
-+       		bool isTagPresent = packet->PeekPacketTag(ipTosTag);
-+       		if (isTagPresent) {
-+       			int tos = ipTosTag.GetTos();
-+       			cmsg.Add(SOL_IP, IP_TOS, sizeof(int), (const uint8_t*) &tos);
-+       		}
++           SocketIpTosTag ipTosTag;
++           bool isTagPresent = packet->PeekPacketTag(ipTosTag);
++           if (isTagPresent) {
++            int tos = ipTosTag.GetTos();
++            cmsg.Add(SOL_IP, IP_TOS, sizeof(int), (const uint8_t*) &tos);
++           }
 +          }
            cmsg.Finish ();
          }
