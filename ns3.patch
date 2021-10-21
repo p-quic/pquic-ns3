@@ -11,11 +11,3 @@ index c9b8e67..2a136dd 100644
        return DoSendTo (p, ipv4, port, tos);
      }
    else if (Inet6SocketAddress::IsMatchingType (address))
-@@ -1012,6 +1012,7 @@ UdpSocketImpl::ForwardUp (Ptr<Packet> packet, Ipv4Header header, uint16_t port,
-       Ipv4PacketInfoTag tag;
-       packet->RemovePacketTag (tag);
-       tag.SetAddress (header.GetDestination ());
-+      tag.SetLocalAddress (header.GetDestination ());
-       tag.SetTtl (header.GetTtl ());
-       tag.SetRecvIf (incomingInterface->GetDevice ()->GetIfIndex ());
-       packet->AddPacketTag (tag);
