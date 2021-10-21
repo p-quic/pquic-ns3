@@ -44,4 +44,4 @@ RUN git revert 94de5084e7430bb51c8176cd99703e552e305391
 WORKDIR /home/ns3dce/dce-linux-dev
 RUN ./bake/bake.py build -j $(nproc)
 
-RUN cd source/ns-3-dce && python3 ./test.py -v -c unit
+RUN cd source/dce-linux-dev && python3 ./test.py -v -c unit
