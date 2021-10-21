@@ -130,7 +130,7 @@ def run_binary(tests, binary, params, values, sim_timeout, hard_timeout, env=Non
                     server_status = read_all(os.path.join(root, 'status'))
 
         # Check that both are disconnected
-        if server_stdout is not None  and 'Connection state = 17' not in server_stdout:
+        if server_stdout is not None  and 'No more active connections.' not in server_stdout:
             failures.append('Server not disconnected')
         if client_stdout is not None  and 'All done, Closing the connection.' not in client_stdout and 'Received a request to close the connection.' not in client_stdout:
             failures.append('Client not disconnected')

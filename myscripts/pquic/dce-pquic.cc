@@ -100,6 +100,7 @@ int main(int argc, char *argv[]) {
         dce.SetBinary("picoquicdemomp");
         dce.ResetArguments();
         dce.ResetEnvironment();
+        dce.AddArgument("-1");
 
         apps = dce.Install(node0);
         apps.Start(Seconds(1.0));

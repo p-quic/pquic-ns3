@@ -84,6 +84,7 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
   // }
   dce.AddArgument("-M");
   dce.AddArgument("2");
+  dce.AddArgument("-1");
 
   apps = dce.Install(right_node_);
   apps.Start(Seconds(1.0));
