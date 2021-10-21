@@ -10,10 +10,6 @@ fi
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 cd $DCE_PATH
-cd ubpf/vm
-make clean
-NS3=1 make -j$(nproc)
-cd $DCE_PATH
 rm -rf CMakeCache.txt CMakeFiles
 sed -i 's/#define PICOQUIC_FIRST_RESPONSE_MAX (1 << 25)/#define PICOQUIC_FIRST_RESPONSE_MAX (1 << 28)/g' picoquicfirst/picoquicdemo.c
 NS3=1 DISABLE_DEBUG_PRINTF=1 DISABLE_QLOG=1 cmake .
