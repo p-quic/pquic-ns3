@@ -76,7 +76,7 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
   }
   if (qlog) {
       dce.AddArgument("-b");
-      dce.AddArgument("/pquic-ns3-dce/server.blog");
+      dce.AddArgument("server.blog");
   }
   // for (size_t i = 0; i < plugins.size(); i++) {
   //     dce.AddArgument("-P");
@@ -100,7 +100,7 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
       }
       if (qlog) {
           dce.AddArgument("-b");
-          std::string blogFile = "/pquic-ns3-dce/client_" + std::to_string(id) + ".blog";
+          std::string blogFile = "client_" + std::to_string(id) + ".blog";
           dce.AddArgument(blogFile);
       }
       // for (size_t i = 0; i < plugins.size(); i++) {
