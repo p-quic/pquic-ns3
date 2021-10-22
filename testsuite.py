@@ -23,6 +23,7 @@ parser = argparse.ArgumentParser(description='Runs a suite of NS3 DCE tests agai
 parser.add_argument('-t', '--test', type=str, default=None, help='Only runs TEST')
 parser.add_argument('-r', '--results', type=str, default='results.json', metavar='FILE', help='Stores the results in FILE (default results.json)')
 parser.add_argument('-d', '--debug', action='store_true', help='Turns on debugging')
+parser.add_argument('-q', '--with-qlog', action='store_true', help='Produces QLOG files when running experiments')
 test_args = parser.parse_args()
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -111,6 +112,7 @@ def run_binary(tests, binary, params, values, sim_timeout, hard_timeout, env=Non
         client_stdout, server_stdout = None, None
         client_stderr, server_stderr = None, None
         client_status, server_status = None, None
+        client_qlog, server_qlog = None, None
 
         for root, dirs, files in os.walk(tmp_dir):
             if 'stdout' in files:
@@ -128,6 +130,26 @@ def run_binary(tests, binary, params, values, sim_timeout, hard_timeout, env=Non
                     client_status = read_all(os.path.join(root, 'status'))
                 elif 'files-1' in root:
                     server_status = read_all(os.path.join(root, 'status'))
+            if '.blog' in files:
+                picolog_path = os.path.join(pquic_dir, 'picolog_t')
+                if 'files-0' in root:
+                    for file in files:
+                        full_path = os.path.join(root, file)
+                        ret = run(picolog_path, ['-f', 'qlog', full_path])
+                        if ret != 0:
+                            print("Error when parsing {}", full_path)
+                        else:
+                            for qlog_file in [x for x in os.listdir(root) if '.qlog' in x]:
+                                client_qlog = read_all(os.path.join(root, qlog_file))
+                elif 'files-1' in root:
+                    for file in files:
+                        full_path = os.path.join(root, file)
+                        ret = run(picolog_path, ['-f', 'qlog', full_path])
+                        if ret != 0:
+                            print("Error when parsing {}", full_path)
+                        else:
+                            for qlog_file in [x for x in os.listdir(root) if '.qlog' in x]:
+                                server_qlog = read_all(os.path.join(root, qlog_file))
 
         # Check that both are disconnected
         if server_stdout is not None  and 'No more active connections.' not in server_stdout:
@@ -156,7 +178,7 @@ def run_binary(tests, binary, params, values, sim_timeout, hard_timeout, env=Non
             transfer_time = client_stdout.splitlines()[-2]
             print('Test finished:', binary, ' '.join(args), env, 'in (simulated)', transfer_time, '(real-time) %.2fs' % (end - start))
 
-        return {'start': start, 'end': end, 'values': values, 'cmdline': '%s %s' % (binary, ' '.join(args)), 'failures': failures, 'transfer_time': transfer_time}
+        return {'start': start, 'end': end, 'values': values, 'cmdline': '%s %s' % (binary, ' '.join(args)), 'failures': failures, 'transfer_time': transfer_time, 'client_qlog': client_qlog, 'server_qlog': server_qlog}
 
 
 results = {}
@@ -191,7 +213,10 @@ for b, opts in tests['definitions'].items():
 
             with multiprocessing.Pool(processes=os.environ.get('NPROC')) as pool:
                 r = results[b]['plugins'].get(p_id, [])
-                r.extend(pool.starmap(run_binary, [(tests, b, params, v, opts['sim_timeout'], opts['hard_timeout'], {'PQUIC_PLUGINS': plugin_paths}) for v in ParamsGenerator(params, wsp_matrix).generate_all_values()]))
+                env = {}
+                if test_args.with_qlog:
+                    env["PICOQUIC_QLOG"] = "1"
+                r.extend(pool.starmap(run_binary, [(tests, b, params, v, opts['sim_timeout'], opts['hard_timeout'], env) for v in ParamsGenerator(params, wsp_matrix).generate_all_values()]))
                 results[b]['plugins'][p_id] = r
 
             if f:

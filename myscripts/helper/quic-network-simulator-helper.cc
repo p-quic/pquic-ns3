@@ -65,7 +65,7 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
       plugins = split(std::getenv("PQUIC_PLUGINS"), ",");
   }
 
-  bool qlog = std::getenv("PQUIC_QLOG") && strlen(std::getenv("PQUIC_QLOG"));
+  bool qlog = std::getenv("PICOQUIC_QLOG") && strlen(std::getenv("PICOQUIC_QLOG"));
 
   dce.SetBinary("picoquicdemomp");
   dce.ResetArguments();
@@ -75,8 +75,8 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
       dce.AddArgument("/dev/null");
   }
   if (qlog) {
-      dce.AddArgument("-q");
-      dce.AddArgument("server.qlog");
+      dce.AddArgument("-b");
+      dce.AddArgument("server.blog");
   }
   // for (size_t i = 0; i < plugins.size(); i++) {
   //     dce.AddArgument("-P");
@@ -99,9 +99,9 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
           dce.AddArgument("/dev/null");
       }
       if (qlog) {
-          dce.AddArgument("-q");
-          std::string qlogFile = "client_" + std::to_string(id) + ".qlog";
-          dce.AddArgument(qlogFile);
+          dce.AddArgument("-b");
+          std::string blogFile = "client_" + std::to_string(id) + ".blog";
+          dce.AddArgument(blogFile);
       }
       // for (size_t i = 0; i < plugins.size(); i++) {
       //     dce.AddArgument("-P");
