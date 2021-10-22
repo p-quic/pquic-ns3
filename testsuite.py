@@ -130,26 +130,26 @@ def run_binary(tests, binary, params, values, sim_timeout, hard_timeout, env=Non
                     client_status = read_all(os.path.join(root, 'status'))
                 elif 'files-1' in root:
                     server_status = read_all(os.path.join(root, 'status'))
-            if '.blog' in files:
+
+        for file in os.listdir(script_dir):
+            if '.blog' in file:
                 picolog_path = os.path.join(pquic_dir, 'picolog_t')
-                if 'files-0' in root:
-                    for file in files:
-                        full_path = os.path.join(root, file)
-                        ret = run(picolog_path, ['-f', 'qlog', full_path])
-                        if ret != 0:
-                            print("Error when parsing {}", full_path)
-                        else:
-                            for qlog_file in [x for x in os.listdir(root) if '.qlog' in x]:
-                                client_qlog = read_all(os.path.join(root, qlog_file))
-                elif 'files-1' in root:
-                    for file in files:
-                        full_path = os.path.join(root, file)
-                        ret = run(picolog_path, ['-f', 'qlog', full_path])
-                        if ret != 0:
-                            print("Error when parsing {}", full_path)
-                        else:
-                            for qlog_file in [x for x in os.listdir(root) if '.qlog' in x]:
-                                server_qlog = read_all(os.path.join(root, qlog_file))
+                if 'client' in file:
+                    full_path = os.path.join(script_dir, file)
+                    ret = run(picolog_path, ['-f', 'qlog', full_path])
+                    if ret != 0:
+                        print("Error when parsing {}", full_path)
+                    else:
+                        for qlog_file in [x for x in os.listdir(script_dir) if '.qlog' in x and 'client' in x]:
+                            client_qlog = read_all(os.path.join(script_dir, qlog_file))
+                elif 'server' in file:
+                    full_path = os.path.join(script_dir, file)
+                    ret = run(picolog_path, ['-f', 'qlog', full_path])
+                    if ret != 0:
+                        print("Error when parsing {}", full_path)
+                    else:
+                        for qlog_file in [x for x in os.listdir(script_dir) if '.qlog' in x and 'server' in x]:
+                            server_qlog = read_all(os.path.join(script_dir, qlog_file))
 
         # Check that both are disconnected
         if server_stdout is not None  and 'No more active connections.' not in server_stdout:
@@ -206,7 +206,6 @@ for b, opts in tests['definitions'].items():
     results[b] = {'plugins': {}}
 
     for p_id in opts['variants']['plugins']:
-        plugin_paths = ','.join(tests['plugins'][p_id]['plugins']).strip()
         for f in opts['variants'].get('filesize', [None]):
             if f and not 'filesize' in params:
                 params['filesize'] = {'range': [f, f], 'type': type(f)}
