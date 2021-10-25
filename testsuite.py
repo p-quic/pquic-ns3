@@ -133,9 +133,9 @@ def run_binary(tests, binary, params, values, sim_timeout, hard_timeout, env=Non
 
             for qlog_file in [f for f in files if '.qlog' in f]:
                 if '.client.qlog' in qlog_file and 'files-0' in root:
-                    client_qlog = read_all(os.path.join(root, qlog_file))
+                    client_qlog = json.loads(read_all(os.path.join(root, qlog_file)))
                 elif '.server.qlog' in qlog_file and 'files-1' in root:
-                    server_qlog = read_all(os.path.join(root, qlog_file))
+                    server_qlog = json.loads(read_all(os.path.join(root, qlog_file)))
 
         # Check that both are disconnected
         if server_stdout is not None  and 'No more active connections.' not in server_stdout:
