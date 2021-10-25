@@ -1,4 +1,4 @@
-FROM pquic-ns3-dce-base
+FROM picoquic-ns3-dce-base
 
 # PQUIC dependencies
 USER root
