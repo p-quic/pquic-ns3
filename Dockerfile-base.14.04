@@ -44,6 +44,12 @@ RUN mkdir -p /home/ns3dce/dce-linux-dev
 WORKDIR /home/ns3dce/dce-linux-dev
 RUN git clone https://github.com/thehajime/bake
 
+WORKDIR /home/ns3dce/dce-linux-dev/bake
+COPY bakeconf.xml.patch .
+RUN git apply < bakeconf.xml.patch
+
+WORKDIR /home/ns3dce/dce-linux-dev
+
 RUN ./bake/bake.py configure -e dce-linux-dev -e iperf -m && \
     ./bake/bake.py download
 
@@ -57,7 +63,6 @@ RUN git config --global user.name "ns-3 DCE"
 RUN git revert 94de5084e7430bb51c8176cd99703e552e305391
 
 WORKDIR /home/ns3dce/dce-linux-dev
-RUN sed -i 's;#!/usr/bin/env python;#!/usr/bin/env python3;g' /home/ns3dce/dce-linux-dev/source/ns-3-dce/waf
 RUN ./bake/bake.py build -j $(nproc) -vvv
 
-RUN cd source/ns-3-dce && python3 ./test.py -v -c unit
+RUN cd source/dce-linux-dev && python3 ./test.py -v -c unit
