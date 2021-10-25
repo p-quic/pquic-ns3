@@ -8,7 +8,7 @@ fi
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 if [[ $# -lt 2 ]]; then
-    docker run -i -t -v $DIR/myscripts:/home/ns3dce/dce-linux-dev/source/dce-linux-dev/myscripts -v $DIR:/pquic-ns3-dce -v $1:/home/ns3dce/pquic pquic-ns3-dce
+    docker run -i -t -v $DIR/myscripts:/home/ns3dce/dce-linux-dev/source/dce-linux-dev/myscripts -v $DIR:/picoquic-ns3-dce -v $1:/home/ns3dce/picoquic picoquic-ns3-dce
 else
-    docker run --rm -v $DIR/myscripts:/home/ns3dce/dce-linux-dev/source/dce-linux-dev/myscripts -v $DIR:/pquic-ns3-dce -v $1:/home/ns3dce/pquic pquic-ns3-dce $2
+    docker run --rm -v $DIR/myscripts:/home/ns3dce/dce-linux-dev/source/dce-linux-dev/myscripts -v $DIR:/picoquic-ns3-dce -v $1:/home/ns3dce/picoquic picoquic-ns3-dce $2
 fi
