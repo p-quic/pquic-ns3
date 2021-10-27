@@ -216,7 +216,7 @@ index 5aca622..3cb6a48 100644
 -                      memcpy (&pkt.ipi_addr, msg->msg_name, sizeof (pkt.ipi_addr));
 -                    }
 +                  pkt.ipi_addr.s_addr = htonl(ipv4Tag.GetAddress().Get());
-+                  pkt.ipi_spec_dst.s_addr = htonl(ipv4Tag.GetAddress().Get());
++                  pkt.ipi_spec_dst.s_addr = htonl(ipv4Tag.GetLocalAddress().Get());
                    cmsg.Add (SOL_IP, IP_PKTINFO, sizeof (struct in_pktinfo), (const uint8_t *)&pkt);
  
                    NS_LOG_DEBUG ("ipv4 tag, iface: " <<  pkt.ipi_ifindex);
@@ -225,12 +225,12 @@ index 5aca622..3cb6a48 100644
  
              }
 +          if (m_socket->IsIpRecvTos()) {
-+           SocketIpTosTag ipTosTag;
-+           bool isTagPresent = packet->PeekPacketTag(ipTosTag);
-+           if (isTagPresent) {
-+            int tos = ipTosTag.GetTos();
-+            cmsg.Add(SOL_IP, IP_TOS, sizeof(int), (const uint8_t*) &tos);
-+           }
++       		SocketIpTosTag ipTosTag;
++       		bool isTagPresent = packet->PeekPacketTag(ipTosTag);
++       		if (isTagPresent) {
++       			int tos = ipTosTag.GetTos();
++       			cmsg.Add(SOL_IP, IP_TOS, sizeof(int), (const uint8_t*) &tos);
++       		}
 +          }
            cmsg.Finish ();
          }
