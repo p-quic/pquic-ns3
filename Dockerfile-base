@@ -33,13 +33,13 @@ RUN ./bake/bake.py configure -e dce-linux-dev -e iperf && \
     ./bake/bake.py download
 
 WORKDIR /home/ns3dce/dce-linux-dev/source/ns-3-dev
-COPY ns3.patch .
-RUN git apply < ns3.patch
-
-WORKDIR /home/ns3dce/dce-linux-dev/source/ns-3-dev
 RUN git config --global user.email "ns3dce@localhost"
 RUN git config --global user.name "ns-3 DCE"
 RUN git revert 94de5084e7430bb51c8176cd99703e552e305391
+
+WORKDIR /home/ns3dce/dce-linux-dev/source/ns-3-dev
+COPY ns3.patch .
+RUN git apply < ns3.patch
 
 WORKDIR /home/ns3dce/dce-linux-dev
 RUN ./bake/bake.py build -j $(nproc)
