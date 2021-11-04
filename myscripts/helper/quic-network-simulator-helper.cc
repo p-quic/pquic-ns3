@@ -66,6 +66,7 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
   }
 
   bool qlog = std::getenv("PICOQUIC_QLOG") && strlen(std::getenv("PICOQUIC_QLOG"));
+  bool multiple_pns = std::getenv("PICOQUIC_MULTIPLE_PNS") && strlen(std::getenv("PICOQUIC_MULTIPLE_PNS"));
 
   dce.SetBinary("picoquicdemomp");
   dce.ResetArguments();
@@ -83,7 +84,11 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
   //     dce.AddArgument(plugins[i]);
   // }
   dce.AddArgument("-M");
-  dce.AddArgument("2");
+  if (multiple_pns) {
+    dce.AddArgument("1");
+  } else {
+    dce.AddArgument("2");
+  }
   dce.AddArgument("-1");
 
   apps = dce.Install(right_node_);
@@ -107,7 +112,11 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
       //     dce.AddArgument(plugins[i]);
       // }
       dce.AddArgument("-M");
-      dce.AddArgument("2");
+      if (multiple_pns) {
+        dce.AddArgument("1");
+      } else {
+        dce.AddArgument("2");
+      }
       //dce.AddArgument("-4");
       dce.AddArgument("-G");
       dce.AddArgument(f);

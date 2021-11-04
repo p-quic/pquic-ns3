@@ -24,6 +24,7 @@ parser.add_argument('-t', '--test', type=str, default=None, help='Only runs TEST
 parser.add_argument('-r', '--results', type=str, default='results.json', metavar='FILE', help='Stores the results in FILE (default results.json)')
 parser.add_argument('-d', '--debug', action='store_true', help='Turns on debugging')
 parser.add_argument('-q', '--with-qlog', action='store_true', help='Produces QLOG files when running experiments')
+parser.add_argument('-m', '--multiple-pns', action='store_true', help='Explore multiple packet number spaces')
 test_args = parser.parse_args()
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -201,6 +202,8 @@ for b, opts in tests['definitions'].items():
                 env = {}
                 if test_args.with_qlog:
                     env["PICOQUIC_QLOG"] = "1"
+                if test_args.multiple_pns:
+                    env["PICOQUIC_MULTIPLE_PNS"] = "1"
                 r.extend(pool.starmap(run_binary, [(tests, b, params, v, opts['sim_timeout'], opts['hard_timeout'], env) for v in ParamsGenerator(params, wsp_matrix).generate_all_values()]))
                 results[b]['plugins'][p_id] = r
 
