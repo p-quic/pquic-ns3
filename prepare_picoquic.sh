@@ -18,7 +18,7 @@ cd $DIR
 
 cd $NS3_PATH
 mkdir -p files-0/dev files-1/dev
-cp -rv /pquic-ns3-dce/certs files-1/
+cp -rv /picoquic-ns3-dce/certs files-1/
 ln -s -f /dev/null files-0/dev/null
 ln -s -f /dev/null files-1/dev/null
 

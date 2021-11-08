@@ -107,6 +107,9 @@ class ParamsGenerator(object):
     def __len__(self):
         return len(self.matrix[0])
 
-    def generate_all_values(self):
+    def generate_all_values(self, max=None):
         for i in range(len(self.matrix[0])):
+            if max and i >= max:
+                break
+
             yield self._generate_value_at(i)

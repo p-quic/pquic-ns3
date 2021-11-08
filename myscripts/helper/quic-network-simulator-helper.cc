@@ -60,9 +60,9 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
 
   bool debug = std::getenv("PQUIC_DEBUG") && strlen(std::getenv("PQUIC_DEBUG"));
 
-  std::vector<std::string> plugins;
-  if (std::getenv("PQUIC_PLUGINS") && strlen(std::getenv("PQUIC_PLUGINS"))) {
-      plugins = split(std::getenv("PQUIC_PLUGINS"), ",");
+  std::string cong_control = "cubic";
+  if (std::getenv("PICOQUIC_CC") && strlen(std::getenv("PICOQUIC_CC"))) {
+    cong_control = std::string(std::getenv("PICOQUIC_CC"));
   }
 
   bool qlog = std::getenv("PICOQUIC_QLOG") && strlen(std::getenv("PICOQUIC_QLOG"));
@@ -79,16 +79,14 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
       dce.AddArgument("-q");
       dce.AddArgument(".");
   }
-  // for (size_t i = 0; i < plugins.size(); i++) {
-  //     dce.AddArgument("-P");
-  //     dce.AddArgument(plugins[i]);
-  // }
   dce.AddArgument("-M");
   if (multiple_pns) {
     dce.AddArgument("1");
   } else {
     dce.AddArgument("2");
   }
+  dce.AddArgument("-G");
+  dce.AddArgument(cong_control);
   dce.AddArgument("-1");
 
   apps = dce.Install(right_node_);
@@ -107,18 +105,15 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
           dce.AddArgument("-q");
           dce.AddArgument(".");
       }
-      // for (size_t i = 0; i < plugins.size(); i++) {
-      //     dce.AddArgument("-P");
-      //     dce.AddArgument(plugins[i]);
-      // }
       dce.AddArgument("-M");
       if (multiple_pns) {
         dce.AddArgument("1");
       } else {
         dce.AddArgument("2");
       }
-      //dce.AddArgument("-4");
       dce.AddArgument("-G");
+      dce.AddArgument(cong_control);
+      dce.AddArgument("-g");
       dce.AddArgument(f);
       dce.AddArgument("-A");
       dce.AddArgument("192.168.51.1");

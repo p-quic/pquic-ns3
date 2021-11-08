@@ -25,6 +25,8 @@ parser.add_argument('-r', '--results', type=str, default='results.json', metavar
 parser.add_argument('-d', '--debug', action='store_true', help='Turns on debugging')
 parser.add_argument('-q', '--with-qlog', action='store_true', help='Produces QLOG files when running experiments')
 parser.add_argument('-m', '--multiple-pns', action='store_true', help='Explore multiple packet number spaces')
+parser.add_argument('-p', '--process-qlog', action='store_true', help='Do not record full QLOG, but their processed form')
+parser.add_argument('-c', '--congestion-control', type=str, default='cubic', help='Use the provided congestion control (default cubic)')
 test_args = parser.parse_args()
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -134,9 +136,26 @@ def run_binary(tests, binary, params, values, sim_timeout, hard_timeout, env=Non
 
             for qlog_file in [f for f in files if '.qlog' in f]:
                 if '.client.qlog' in qlog_file and 'files-0' in root:
-                    client_qlog = json.loads(read_all(os.path.join(root, qlog_file)))
+                    full_path = os.path.join(root, qlog_file)
+                    # Because QLOG might be ill formatted.
+                    run('sed -i "s;,]}]};]}]};g" ' + str(full_path))
+                    if test_args.process_qlog:
+                        cmd = "{}/frame-extractor -q -a {} out.qlog".format(script_dir, full_path)
+                        run(cmd)
+                        client_qlog = json.loads(read_all('out.qlog'))
+                    else:
+                        client_qlog = json.loads(read_all(full_path))
+
                 elif '.server.qlog' in qlog_file and 'files-1' in root:
-                    server_qlog = json.loads(read_all(os.path.join(root, qlog_file)))
+                    full_path = os.path.join(root, qlog_file)
+                    # Because QLOG might be ill formatted.
+                    run('sed -i "s;,]}]};]}]};g" ' + str(full_path))
+                    if test_args.ack_ranges:
+                        cmd = "{}/frame-extractor -q -s {} out.qlog".format(script_dir, full_path)
+                        run(cmd)
+                        server_qlog = json.loads(read_all('out.qlog'))
+                    else:
+                        server_qlog = json.loads(read_all(full_path))
 
         # Check that both are disconnected
         if server_stdout is not None  and 'No more active connections.' not in server_stdout:
@@ -162,7 +181,7 @@ def run_binary(tests, binary, params, values, sim_timeout, hard_timeout, env=Non
             print(failures)
             print('Test crashed:', binary, ' '.join(args), env, 'after (real-time) %.2fs' % (end - start))
         else:
-            transfer_time = client_stdout.splitlines()[-2]
+            transfer_time = ' '.join(client_stdout.splitlines()[-12].split()[4:6])
             print('Test finished:', binary, ' '.join(args), env, 'in (simulated)', transfer_time, '(real-time) %.2fs' % (end - start))
 
         return {'start': start, 'end': end, 'values': values, 'cmdline': '%s %s' % (binary, ' '.join(args)), 'failures': failures, 'transfer_time': transfer_time, 'client_qlog': client_qlog, 'server_qlog': server_qlog}
@@ -178,6 +197,7 @@ build_ns3()
 build_picoquic()
 os.chdir(ns3_dir)
 for b, opts in tests['definitions'].items():
+    results = {}
 
     if test_args.test and b != test_args.test:
         continue
@@ -190,25 +210,24 @@ for b, opts in tests['definitions'].items():
         if attrs['type'] in vars(builtins):
             attrs['type'] = vars(builtins)[attrs['type']]
 
-    results[b] = {'plugins': {}}
-
     for p_id in opts['variants']['plugins']:
         for f in opts['variants'].get('filesize', [None]):
             if f and not 'filesize' in params:
                 params['filesize'] = {'range': [f, f], 'type': type(f)}
 
             with multiprocessing.Pool(processes=os.environ.get('NPROC')) as pool:
-                r = results[b]['plugins'].get(p_id, [])
-                env = {}
+                r = results.get(p_id, [])
+                env = {"PICOQUIC_CC": test_args.congestion_control}
                 if test_args.with_qlog:
                     env["PICOQUIC_QLOG"] = "1"
                 if test_args.multiple_pns:
                     env["PICOQUIC_MULTIPLE_PNS"] = "1"
                 r.extend(pool.starmap(run_binary, [(tests, b, params, v, opts['sim_timeout'], opts['hard_timeout'], env) for v in ParamsGenerator(params, wsp_matrix).generate_all_values()]))
-                results[b]['plugins'][p_id] = r
+                results[p_id] = r
 
             if f:
                 del params['filesize']
 
-with open(os.path.join(test_args.results), 'w') as f:
-    json.dump(results, f)
+    result_fname = os.path.join(os.path.dirname(test_args.results), "{}-{}".format(b, os.path.basename(test_args.results)))
+    with open(result_fname, 'w') as f:
+        json.dump(results, f)
