@@ -140,7 +140,7 @@ def run_binary(tests, binary, params, values, sim_timeout, hard_timeout, env=Non
                     # Because QLOG might be ill formatted.
                     run('sed -i "s;,]}]};]}]};g" ' + str(full_path))
                     if test_args.process_qlog:
-                        cmd = "{}/frame-extractor -q -a {} out.qlog".format(script_dir, full_path)
+                        cmd = "{}/frame-extractor -q -a -b {} out.qlog".format(script_dir, full_path)
                         run(cmd)
                         client_qlog = json.loads(read_all('out.qlog'))
                     else:
@@ -151,7 +151,7 @@ def run_binary(tests, binary, params, values, sim_timeout, hard_timeout, env=Non
                     # Because QLOG might be ill formatted.
                     run('sed -i "s;,]}]};]}]};g" ' + str(full_path))
                     if test_args.ack_ranges:
-                        cmd = "{}/frame-extractor -q -s {} out.qlog".format(script_dir, full_path)
+                        cmd = "{}/frame-extractor -q -s -b {} out.qlog".format(script_dir, full_path)
                         run(cmd)
                         server_qlog = json.loads(read_all('out.qlog'))
                     else:
