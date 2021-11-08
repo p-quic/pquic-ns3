@@ -150,7 +150,7 @@ def run_binary(tests, binary, params, values, sim_timeout, hard_timeout, env=Non
                     full_path = os.path.join(root, qlog_file)
                     # Because QLOG might be ill formatted.
                     run('sed -i "s;,]}]};]}]};g" ' + str(full_path))
-                    if test_args.ack_ranges:
+                    if test_args.process_qlog:
                         cmd = "{}/frame-extractor -q -s -b {} out.qlog".format(script_dir, full_path)
                         run(cmd)
                         server_qlog = json.loads(read_all('out.qlog'))
