@@ -81,9 +81,9 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
   }
   dce.AddArgument("-M");
   if (multiple_pns) {
-    dce.AddArgument("1");
-  } else {
     dce.AddArgument("2");
+  } else {
+    dce.AddArgument("1");
   }
   dce.AddArgument("-G");
   dce.AddArgument(cong_control);
@@ -107,9 +107,9 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
       }
       dce.AddArgument("-M");
       if (multiple_pns) {
-        dce.AddArgument("1");
-      } else {
         dce.AddArgument("2");
+      } else {
+        dce.AddArgument("1");
       }
       dce.AddArgument("-G");
       dce.AddArgument(cong_control);
