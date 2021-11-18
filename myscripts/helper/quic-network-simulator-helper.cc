@@ -116,7 +116,7 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
       dce.AddArgument("-g");
       dce.AddArgument(f);
       dce.AddArgument("-A");
-      dce.AddArgument("192.168.51.1");
+      dce.AddArgument("192.168.51.1,192.168.52.1");
       dce.AddArgument("192.168.50.2");
       dce.AddArgument("4443");
 
