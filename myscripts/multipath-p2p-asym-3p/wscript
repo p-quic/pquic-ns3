@@ -9,8 +9,8 @@ def configure(conf):
 def build(bld):
 #    linkerpath=os.path.abspath(os.path.join('..', 'elf-loader','ldso'))
     bld.build_a_script('dce', needed = ['core', 'internet', 'dce', 'point-to-point', 'netanim' ],
-				  target='bin/multipath-p2p-asym',
-				  source=['multipath-p2p-asym.cc', '../helper/droplist-error-model.cc', '../helper/quic-network-simulator-helper.cc', '../helper/quic-point-to-point-helper.cc'],
+				  target='bin/multipath-p2p-asym-3p',
+				  source=['multipath-p2p-asym-3p.cc', '../helper/droplist-error-model.cc', '../helper/quic-network-simulator-helper.cc', '../helper/quic-point-to-point-helper.cc'],
 #				  linkflags=['-Wl,--dynamic-linker=' + linkerpath ]
 #				  linkflags=['-L/usr/local/lib'],
 #				  lib=['foolib']
