@@ -97,7 +97,7 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
     dce.AddArgument("-X");
     dce.AddArgument("0");
   }
-  if (strlen(fixed_horizon)) {
+  if (fixed_horizon.size() > 0) {
     dce.AddArgument("-H");
     dce.AddArgument(fixed_horizon);
   }
@@ -130,7 +130,7 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
         dce.AddArgument("-X");
         dce.AddArgument("0");
       }
-      if (strlen(fixed_horizon)) {
+      if (fixed_horizon.size() > 0) {
         dce.AddArgument("-H");
         dce.AddArgument(fixed_horizon);
       }
