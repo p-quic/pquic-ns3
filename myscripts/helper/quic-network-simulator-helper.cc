@@ -67,6 +67,11 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
 
   bool qlog = std::getenv("PICOQUIC_QLOG") && strlen(std::getenv("PICOQUIC_QLOG"));
   bool multiple_pns = std::getenv("PICOQUIC_MULTIPLE_PNS") && strlen(std::getenv("PICOQUIC_MULTIPLE_PNS"));
+  bool disable_ack_frequency = std::getenv("PICOQUIC_DISABLE_ACK_FREQUENCY") && strlen(std::getenv("PICOQUIC_DISABLE_ACK_FREQUENCY"));
+  std::string fixed_horizon = "";
+  if (std::getenv("PICOQUIC_FIXED_HORIZON") && strlen(std::getenv("PICOQUIC_FIXED_HORIZON"))) {
+    fixed_horizon = std::string(std::getenv("PICOQUIC_FIXED_HORIZON"));
+  }
 
   dce.SetBinary("picoquicdemomp");
   dce.ResetArguments();
@@ -88,6 +93,14 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
   dce.AddArgument("-G");
   dce.AddArgument(cong_control);
   dce.AddArgument("-1");
+  if (disable_ack_frequency) {
+    dce.AddArgument("-X");
+    dce.AddArgument("0");
+  }
+  if (strlen(fixed_horizon)) {
+    dce.AddArgument("-H");
+    dce.AddArgument(fixed_horizon);
+  }
 
   apps = dce.Install(right_node_);
   apps.Start(Seconds(1.0));
@@ -113,6 +126,14 @@ QuicNetworkSimulatorHelper::QuicNetworkSimulatorHelper(std::vector<std::string> 
       }
       dce.AddArgument("-G");
       dce.AddArgument(cong_control);
+      if (disable_ack_frequency) {
+        dce.AddArgument("-X");
+        dce.AddArgument("0");
+      }
+      if (strlen(fixed_horizon)) {
+        dce.AddArgument("-H");
+        dce.AddArgument(fixed_horizon);
+      }
       dce.AddArgument("-g");
       dce.AddArgument(f);
       dce.AddArgument("-A");
