@@ -26,7 +26,7 @@ parser.add_argument('-d', '--debug', action='store_true', help='Turns on debuggi
 parser.add_argument('-q', '--with-qlog', action='store_true', help='Produces QLOG files when running experiments')
 parser.add_argument('-m', '--multiple-pns', action='store_true', help='Explore multiple packet number spaces')
 parser.add_argument('-f', '--no-ack-frequency', action='store_true', help='Disable ACK FREQUENCY')
-parser.add_argument('-h', '--horizon', type=int, default=0, help='With fixed ACK horizon value')
+parser.add_argument('-H', '--horizon', type=int, default=0, help='With fixed ACK horizon value')
 parser.add_argument('-p', '--process-qlog', action='store_true', help='Do not record full QLOG, but their processed form')
 parser.add_argument('-c', '--congestion-control', type=str, default='cubic', help='Use the provided congestion control (default cubic)')
 test_args = parser.parse_args()
